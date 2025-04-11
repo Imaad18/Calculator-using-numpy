@@ -1,54 +1,13 @@
 import streamlit as st
 import numpy as np
 
-# Set page config for a better layout
-st.set_page_config(page_title="Numpy Calculator", page_icon="🧮", layout="wide")
+# Set page config with a custom favicon
+st.set_page_config(page_title="Numpy Calculator", page_icon="favicon.ico", layout="wide")
 
-# Custom gradient background styling with improved CSS targeting
-st.markdown("""
-    <style>
-        body {
-            background: linear-gradient(135deg, #6a11cb, #2575fc);
-            font-family: 'Arial', sans-serif;
-            height: 100vh;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .css-1d391kg {
-            background-color: transparent;
-        }
-        .stButton>button {
-            background-color: #4CAF50;
-            color: white;
-            font-size: 18px;
-            padding: 10px 24px;
-            border-radius: 8px;
-            margin: 10px;
-        }
-        .stSelectbox, .stTextInput {
-            font-size: 16px;
-            padding: 10px;
-            border-radius: 8px;
-            border: 2px solid #B0C4DE;
-        }
-        .stTextInput>div, .stSelectbox>div {
-            background-color: white !important;
-        }
-        .stText {
-            color: #333;
-        }
-        .stSidebar {
-            background: #f4f7fc;
-            padding: 20px;
-        }
-    </style>
-""", unsafe_allow_html=True)
-
-# Title with a larger font size
-st.title("🧮 **Numpy Basic Calculator**")
-st.write("Use the sidebar to choose your operation and interact with arrays or matrices.")
+# Calculator operations
+def display_menu():
+    st.title("🧮 **Numpy Basic Calculator**")
+    st.write("Use the sidebar to choose your operation and interact with arrays or matrices.")
 
 # Sidebar with options
 st.sidebar.header("Choose Operation")
