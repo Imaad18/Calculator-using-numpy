@@ -1,10 +1,39 @@
 import streamlit as st
 import numpy as np
 
-st.set_page_config(page_title="Numpy Calculator", page_icon="🧮")
+# Set page config for a better layout
+st.set_page_config(page_title="Numpy Calculator", page_icon="🧮", layout="wide")
 
-st.title("🧮 Basic Numpy Calculator")
+# Custom theme styling
+st.markdown("""
+    <style>
+        .css-1d391kg { 
+            background-color: #f4f7fc; 
+            font-family: 'Arial', sans-serif; 
+        }
+        .stButton>button {
+            background-color: #4CAF50; 
+            color: white;
+            font-size: 18px;
+            padding: 10px 24px;
+            border-radius: 8px;
+            margin: 10px;
+        }
+        .stSelectbox, .stTextInput {
+            font-size: 16px;
+            padding: 10px;
+            border-radius: 8px;
+            border: 2px solid #B0C4DE;
+        }
+    </style>
+""", unsafe_allow_html=True)
 
+# Title with a larger font size
+st.title("🧮 **Numpy Basic Calculator**")
+st.write("Use the sidebar to choose your operation and interact with arrays or matrices.")
+
+# Sidebar with options
+st.sidebar.header("Choose Operation")
 menu = [
     "Add",
     "Subtract",
@@ -14,8 +43,9 @@ menu = [
     "Element-wise Operations",
     "Trigonometric Functions"
 ]
-choice = st.selectbox("Select an operation:", menu)
+choice = st.sidebar.selectbox("Select an operation:", menu)
 
+# Function to get array input
 def get_array_input(label):
     user_input = st.text_input(label, value="[1, 2, 3]")
     try:
@@ -42,7 +72,8 @@ if choice in ["Add", "Subtract", "Multiply", "Divide"]:
                 st.error("Division by zero is not allowed.")
                 result = None
         if result is not None:
-            st.write("Result:", result)
+            st.subheader("Result:")
+            st.write(result)
 
 elif choice == "Matrix Multiplication":
     a = get_array_input("Enter the first matrix:")
@@ -50,7 +81,8 @@ elif choice == "Matrix Multiplication":
     if a is not None and b is not None:
         try:
             result = np.matmul(a, b)
-            st.write("Result:", result)
+            st.subheader("Matrix Multiplication Result:")
+            st.write(result)
         except ValueError as e:
             st.error(f"Error: {e}")
 
@@ -66,7 +98,8 @@ elif choice == "Element-wise Operations":
             result = a * const
         elif operation == "Square elements":
             result = np.square(a)
-        st.write("Result:", result)
+        st.subheader("Element-wise Operation Result:")
+        st.write(result)
 
 elif choice == "Trigonometric Functions":
     func = st.selectbox("Choose a trigonometric function:", ["Sine", "Cosine", "Tangent"])
@@ -78,4 +111,5 @@ elif choice == "Trigonometric Functions":
             result = np.cos(a)
         elif func == "Tangent":
             result = np.tan(a)
-        st.write("Result:", result)
+        st.subheader("Trigonometric Function Result:")
+        st.write(result)
