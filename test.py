@@ -4,14 +4,19 @@ import numpy as np
 # Set page config for a better layout
 st.set_page_config(page_title="Numpy Calculator", page_icon="🧮", layout="wide")
 
-# Custom gradient background styling
+# Custom gradient background styling with improved CSS targeting
 st.markdown("""
     <style>
         body {
-            background: linear-gradient(135deg, #F2F2F2, #A3A9FF);
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
             font-family: 'Arial', sans-serif;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-        .css-1d391kg { 
+        .css-1d391kg {
             background-color: transparent;
         }
         .stButton>button {
@@ -28,11 +33,15 @@ st.markdown("""
             border-radius: 8px;
             border: 2px solid #B0C4DE;
         }
-        .stSelectbox>div, .stTextInput>div {
+        .stTextInput>div, .stSelectbox>div {
             background-color: white !important;
         }
         .stText {
             color: #333;
+        }
+        .stSidebar {
+            background: #f4f7fc;
+            padding: 20px;
         }
     </style>
 """, unsafe_allow_html=True)
