@@ -56,7 +56,7 @@ def main():
     with col2:
         st.title("Advanced NumPy Calculator")
         st.caption("Perform scientific computations with ease")
-    
+
     # Initialize session state
     if 'array_a' not in st.session_state:
         st.session_state.array_a = np.array([1, 2, 3])
@@ -64,7 +64,7 @@ def main():
         st.session_state.array_b = np.array([3, 2, 1])
     if 'history' not in st.session_state:
         st.session_state.history = []
-    
+
     # Sidebar menu
     with st.sidebar:
         st.header("🔧 Menu")
@@ -81,7 +81,7 @@ def main():
                 "Array Visualization"
             ]
         )
-        
+
         st.markdown("---")
         st.header("📊 Array Configuration")
         array_type = st.radio(
@@ -89,26 +89,26 @@ def main():
             ["1D Array", "2D Matrix"],
             index=0
         )
-        
+
         if array_type == "1D Array":
             default_a = "[1, 2, 3]"
             default_b = "[3, 2, 1]"
         else:
             default_a = "[[1, 2], [3, 4]]"
             default_b = "[[5, 6], [7, 8]]"
-        
+
         array_a_input = st.text_area(
-            "Array A (Python list format)", 
+            "Array A (Python list format)",
             value=default_a,
             height=60 if array_type == "1D Array" else 80
         )
-        
+
         array_b_input = st.text_area(
-            "Array B (Python list format)", 
+            "Array B (Python list format)",
             value=default_b,
             height=60 if array_type == "1D Array" else 80
         )
-        
+
         if st.button("Update Arrays"):
             try:
                 st.session_state.array_a = np.array(eval(array_a_input))
@@ -116,7 +116,7 @@ def main():
                 st.success("Arrays updated successfully!")
             except Exception as e:
                 st.error(f"Error: {str(e)}")
-        
+
         st.markdown("---")
         st.header("ℹ️ About")
         st.info("""
@@ -137,10 +137,10 @@ def main():
             st.write(st.session_state.array_b)
             st.caption(f"Shape: {st.session_state.array_b.shape}")
             st.caption(f"Data type: {st.session_state.array_b.dtype}")
-    
+
     st.markdown("---")
     st.header(f"📌 {operation} Operations")
-    
+
     # Operation sections
     if operation == "Basic Arithmetic":
         basic_arithmetic()
@@ -158,7 +158,7 @@ def main():
         linear_algebra()
     elif operation == "Array Visualization":
         array_visualization()
-    
+
     # History section
     if st.session_state.history:
         st.markdown("---")
@@ -180,7 +180,7 @@ def basic_arithmetic():
         ("✖️ Multiply", "np.multiply(a, b)"),
         ("➗ Divide", "np.divide(a, b)")
     ]
-    
+
     for i, (label, func) in enumerate(operations):
         with cols[i]:
             if st.button(label):
@@ -199,7 +199,7 @@ def matrix_operations():
         ("🔀 Dot Product", "np.dot(a, b)"),
         ("📐 Cross Product", "np.cross(a, b)")
     ]
-    
+
     for i, (label, func) in enumerate(operations):
         with cols[i]:
             if st.button(label):
@@ -223,13 +223,13 @@ def elementwise_operations():
             "Exponentiation"
         ]
     )
-    
+
     if option in ["Add Constant", "Multiply by Constant"]:
         constant = st.number_input("Enter constant value", value=1.0)
-    
+
     if option == "Exponentiation":
         power = st.number_input("Enter exponent value", value=2.0)
-    
+
     if st.button("Perform Operation"):
         try:
             a = st.session_state.array_a
@@ -251,7 +251,7 @@ def elementwise_operations():
             elif option == "Exponentiation":
                 result = np.power(a, power)
                 op_name = f"Raise to power {power}"
-            
+
             st.success(f"Result:\n```\n{result}\n```")
             add_to_history(op_name, result)
         except Exception as e:
@@ -266,7 +266,7 @@ def trigonometric_functions():
             "Hyperbolic Sine", "Hyperbolic Cosine", "Hyperbolic Tangent"
         ]
     )
-    
+
     if st.button("Calculate"):
         try:
             a = st.session_state.array_a
@@ -288,7 +288,7 @@ def trigonometric_functions():
                 result = np.cosh(a)
             elif option == "Hyperbolic Tangent":
                 result = np.tanh(a)
-            
+
             st.success(f"Result:\n```\n{result}\n```")
             add_to_history(f"{option} function", result)
         except Exception as e:
@@ -305,10 +305,10 @@ def exponential_logarithmic():
             "Logarithm (Custom Base)"
         ]
     )
-    
+
     if option == "Logarithm (Custom Base)":
         base = st.number_input("Enter logarithm base", min_value=0.1, value=2.0)
-    
+
     if st.button("Calculate"):
         try:
             a = st.session_state.array_a
@@ -322,7 +322,7 @@ def exponential_logarithmic():
                 result = np.log2(a)
             elif option == "Logarithm (Custom Base)":
                 result = np.log(a) / np.log(base)
-            
+
             st.success(f"Result:\n```\n{result}\n```")
             add_to_history(option, result)
         except Exception as e:
@@ -337,7 +337,7 @@ def statistical_operations():
             "Product", "Cumulative Sum", "Cumulative Product"
         ]
     )
-    
+
     if st.button("Calculate"):
         try:
             a = st.session_state.array_a
@@ -361,7 +361,7 @@ def statistical_operations():
                 result = np.cumsum(a)
             elif option == "Cumulative Product":
                 result = np.cumprod(a)
-            
+
             st.success(f"Result:\n```\n{result}\n```")
             add_to_history(option, result)
         except Exception as e:
@@ -379,7 +379,7 @@ def linear_algebra():
             "Matrix Norm"
         ]
     )
-    
+
     if st.button("Calculate"):
         try:
             a = st.session_state.array_a
@@ -395,7 +395,7 @@ def linear_algebra():
                 result = np.linalg.eigvals(a)
             elif option == "Matrix Norm":
                 result = np.linalg.norm(a)
-            
+
             st.success(f"Result:\n```\n{result}\n```")
             add_to_history(option, result)
         except Exception as e:
@@ -403,22 +403,22 @@ def linear_algebra():
 
 def array_visualization():
     st.subheader("Array Visualization")
-    
+
     option = st.selectbox(
         "Select Visualization Type",
         ["Line Plot", "Bar Chart", "Scatter Plot", "Histogram"]
     )
-    
+
     if option in ["Line Plot", "Bar Chart", "Scatter Plot"]:
         show_both = st.checkbox("Show both arrays", value=True)
-    
+
     if st.button("Generate Plot"):
         try:
             a = st.session_state.array_a
             b = st.session_state.array_b
-            
+
             fig, ax = plt.subplots(figsize=(8, 4))
-            
+
             if option == "Line Plot":
                 ax.plot(a, label="Array A")
                 if show_both:
@@ -428,21 +428,31 @@ def array_visualization():
                 if len(a.shape) == 1:
                     x = range(len(a))
                     ax.bar(x, a, width=0.4, label="Array A")
-                    if show_both:
+                    if show_both and len(b.shape) == 1 and len(b) == len(a):
                         ax.bar([p + 0.4 for p in x], b, width=0.4, label="Array B")
-                ax.set_title("Bar Chart")
-            elif option == "Scatter Plot":
-                if len(a.shape) == 1 and len(b.shape) == 1:
-                    ax.scatter(a, b)
-                    ax.set_title("Scatter Plot (A vs B)")
+                    elif show_both:
+                        st.warning("Bar chart requires 1D arrays of the same length to show both.")
                 else:
-                    st.warning("Scatter plot requires 1D arrays")
+                    st.warning("Bar chart requires 1D arrays.")
+                ax.set_title("Bar Chart")
+                ax.set_xlabel("Index")
+                ax.set_ylabel("Value")
+            elif option == "Scatter Plot":
+                if len(a.shape) == 1 and len(b.shape) == 1 and len(a) == len(b):
+                    ax.scatter(a, b)
+                    ax.set_title("Scatter Plot (Array A vs Array B)")
+                    ax.set_xlabel("Array A")
+                    ax.set_ylabel("Array B")
+                else:
+                    st.warning("Scatter plot requires two 1D arrays of the same length.")
             elif option == "Histogram":
                 ax.hist(a.flatten(), bins=20, alpha=0.7, label="Array A")
                 if show_both:
                     ax.hist(b.flatten(), bins=20, alpha=0.7, label="Array B")
                 ax.set_title("Histogram")
-            
+                ax.set_xlabel("Value")
+                ax.set_ylabel("Frequency")
+
             ax.legend()
             ax.grid(True)
             st.pyplot(fig)
