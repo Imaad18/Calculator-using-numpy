@@ -460,33 +460,38 @@ def array_visualization():
         except Exception as e:
             st.error(f"Error generating plot: {str(e)}")
 
+import streamlit as st
 
-import os
-import zipfile
-from io import BytesIO
+# Set page title, icon, layout
+st.set_page_config(page_title="My Custom App", page_icon="🚀", layout="wide")
 
-def create_zip_of_app():
-    zip_buffer = BytesIO()
-    with zipfile.ZipFile(zip_buffer, "w") as zipf:
-        # List all files to include in the zip
-        files_to_zip = ["app.py"]  # Add other files like requirements.txt, etc., here
-        for filename in files_to_zip:
-            if os.path.exists(filename):
-                zipf.write(filename, arcname=os.path.basename(filename))
-    zip_buffer.seek(0)
-    return zip_buffer
+# Hide Streamlit branding
+hide_streamlit_style = """
+    <style>
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    </style>
+"""
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
-def show_download_button():
-    st.markdown("---")
-    st.header("📥 Download Web App")
-    st.caption("Download the app code and run it locally using Streamlit.")
-    zip_file = create_zip_of_app()
-    st.download_button(
-        label="📦 Download App as ZIP",
-        data=zip_file,
-        file_name="numpy_calculator_app.zip",
-        mime="application/zip"
-    )
+# --- Your app starts here ---
+st.title("Welcome to My Custom App")
+
+st.write("This is your Streamlit app running in a custom desktop window!")
+
+
+
+import threading
+import webview
+import subprocess
+import time
+
+def start_streamlit():
+    subprocess.Popen(["streamlit", "run", "app.py", "--server.headless", "true"])
+    time.sleep(3)  # Give Streamlit some time to start
+
+
 
 if __name__ == "__main__":
     main()
