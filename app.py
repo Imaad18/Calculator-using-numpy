@@ -458,7 +458,7 @@ def array_visualization():
             st.pyplot(fig)
             add_to_history(f"{option} Visualization", "Plot generated")
         except Exception as e:
-            st.error(f"Error generating plot: {str(e)}"
+            st.error(f"Error generating plot: {str(e)}")
 
 
 
