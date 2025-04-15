@@ -460,5 +460,33 @@ def array_visualization():
         except Exception as e:
             st.error(f"Error generating plot: {str(e)}")
 
+
+import os
+import zipfile
+from io import BytesIO
+
+def create_zip_of_app():
+    zip_buffer = BytesIO()
+    with zipfile.ZipFile(zip_buffer, "w") as zipf:
+        # List all files to include in the zip
+        files_to_zip = ["app.py"]  # Add other files like requirements.txt, etc., here
+        for filename in files_to_zip:
+            if os.path.exists(filename):
+                zipf.write(filename, arcname=os.path.basename(filename))
+    zip_buffer.seek(0)
+    return zip_buffer
+
+def show_download_button():
+    st.markdown("---")
+    st.header("📥 Download Web App")
+    st.caption("Download the app code and run it locally using Streamlit.")
+    zip_file = create_zip_of_app()
+    st.download_button(
+        label="📦 Download App as ZIP",
+        data=zip_file,
+        file_name="numpy_calculator_app.zip",
+        mime="application/zip"
+    )
+
 if __name__ == "__main__":
     main()
