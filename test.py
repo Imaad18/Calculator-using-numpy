@@ -458,38 +458,7 @@ def array_visualization():
             st.pyplot(fig)
             add_to_history(f"{option} Visualization", "Plot generated")
         except Exception as e:
-            st.error(f"Error generating plot: {str(e)}")
-
-import streamlit as st
-
-# Set page title, icon, layout
-st.set_page_config(page_title="My Custom App", page_icon="🚀", layout="wide")
-
-# Hide Streamlit branding
-hide_streamlit_style = """
-    <style>
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
-    </style>
-"""
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
-
-# --- Your app starts here ---
-st.title("Welcome to My Custom App")
-
-st.write("This is your Streamlit app running in a custom desktop window!")
-
-
-
-import threading
-import webview
-import subprocess
-import time
-
-def start_streamlit():
-    subprocess.Popen(["streamlit", "run", "app.py", "--server.headless", "true"])
-    time.sleep(3)  # Give Streamlit some time to start
+            st.error(f"Error generating plot: {str(e)}"
 
 
 
