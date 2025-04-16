@@ -21,6 +21,12 @@ This is a basic calculator implemented in Python that supports various mathemati
 - **Trigonometric Functions**: Compute the sine, cosine, and tangent of array values in radians.
 - **Error Handling**: Handles division by zero errors and matrix size mismatches.
 
+# App.py: 
+It contains code which you can use to deploy web app on streamlit.
+
+# Calculator.py:
+It is simpler version of App.py to just have a basic idea of code.
+
 ## Installation
 
 To use this calculator, ensure you have Python installed on your system. You'll also need to install the `numpy` library. You can install the required dependencies by running the following command:
@@ -28,5 +34,3 @@ To use this calculator, ensure you have Python installed on your system. You'll 
 ```bash
 pip install -r requirements.txt
 
-# App.py
-This file contains code which you can use to deploy web app on streamlit
