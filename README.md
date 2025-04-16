@@ -27,3 +27,6 @@ To use this calculator, ensure you have Python installed on your system. You'll 
 
 ```bash
 pip install -r requirements.txt
+
+# App.py
+This file contains code which you can use to deploy web app on streamlit
