@@ -1,3 +1,7 @@
+![image](https://github.com/user-attachments/assets/842b845c-aec3-450b-9c12-31c865f6380f)
+
+
+
 # Live Demo in form of App
 https://calculator-using-numpy-ntqymnitogpiamxafiwyep.streamlit.app/
 
