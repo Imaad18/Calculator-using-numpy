@@ -19,19 +19,33 @@ st.markdown("""
         font-family: 'Segoe UI', sans-serif;
     }
     .stApp {
-        background-color: #f2f6fc;
+        background: linear-gradient(to right, #667eea, #764ba2);
+        background-attachment: fixed;
+        background-size: cover;
+        color: #ffffff;
+    }
+    .css-1aumxhk, .stExpander > div > div {
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+        padding: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        color: #ffffff;
     }
     .stButton>button {
-        background-color: #6c5ce7;
-        color: white;
+        background: #00cec9;
         border-radius: 10px;
+        color: white;
+        font-weight: bold;
         padding: 0.6rem 1.2rem;
         border: none;
-        font-weight: 600;
-        transition: all 0.3s ease;
+        transition: all 0.3s ease-in-out;
     }
     .stButton>button:hover {
-        background-color: #5a4cd2;
+        background: #00b894;
+        transform: scale(1.05);
+        box-shadow: 0 0 10px #00cec9;
     }
     .stSelectbox, .stTextArea, .stRadio, .stNumberInput, .stTextInput {
         background-color: white;
@@ -40,28 +54,8 @@ st.markdown("""
     .block-container {
         padding: 2rem 3rem;
     }
-    .css-1aumxhk {
-        background-color: #ffffff;
-        border-radius: 12px;
-        padding: 25px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    }
-    .operation-card {
-        background: linear-gradient(to bottom right, #a29bfe, #dfe6e9);
-        border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 15px;
-        color: #2d3436;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-    }
-    .stExpander > div > div {
-        background-color: #fff;
-        border: 1px solid #dfe6e9;
-        border-radius: 10px;
-    }
 </style>
 """, unsafe_allow_html=True)
-
 def main():
     # Header with logo
     col1, col2 = st.columns([1, 4])
