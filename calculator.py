@@ -112,6 +112,149 @@ class ModernCalculator:
             return f"#{lightened[0]:02x}{lightened[1]:02x}{lightened[2]:02x}"
         return color
     
+    def create_gradient_background(self):
+        """Create an animated gradient background with CSS-like effects"""
+        # Create background canvas
+        self.bg_canvas = tk.Canvas(self.root, highlightthickness=0)
+        self.bg_canvas.place(x=0, y=0, relwidth=1, relheight=1)
+        
+        # Gradient colors for animation
+        self.gradient_colors = [
+            ['#0f0f23', '#1a1a2e', '#16213e', '#0f3460'],
+            ['#1a1a2e', '#16213e', '#0f3460', '#533483'],
+            ['#16213e', '#0f3460', '#533483', '#6c5ce7'],
+            ['#0f3460', '#533483', '#6c5ce7', '#a29bfe'],
+            ['#533483', '#6c5ce7', '#a29bfe', '#74b9ff']
+        ]
+        self.current_gradient = 0
+        
+        # Create initial gradient
+        self.draw_gradient_background()
+        
+        # Start animation
+        self.animate_background()
+    
+    def draw_gradient_background(self):
+        """Draw animated gradient background"""
+        self.bg_canvas.delete("gradient")
+        
+        width = self.root.winfo_width() if self.root.winfo_width() > 1 else 1000
+        height = self.root.winfo_height() if self.root.winfo_height() > 1 else 700
+        
+        colors = self.gradient_colors[self.current_gradient % len(self.gradient_colors)]
+        
+        # Create diagonal gradient effect
+        steps = 100
+        for i in range(steps):
+            # Calculate color interpolation
+            ratio = i / steps
+            
+            # Interpolate between multiple colors
+            if ratio < 0.33:
+                # First third: color[0] to color[1]
+                local_ratio = ratio * 3
+                color = self.interpolate_color(colors[0], colors[1], local_ratio)
+            elif ratio < 0.66:
+                # Second third: color[1] to color[2]
+                local_ratio = (ratio - 0.33) * 3
+                color = self.interpolate_color(colors[1], colors[2], local_ratio)
+            else:
+                # Final third: color[2] to color[3]
+                local_ratio = (ratio - 0.66) * 3
+                color = self.interpolate_color(colors[2], colors[3], local_ratio)
+            
+            # Create diagonal stripes
+            x1 = int(i * width / steps)
+            y1 = 0
+            x2 = x1 + int(width / steps) + 2
+            y2 = height
+            
+            self.bg_canvas.create_rectangle(x1, y1, x2, y2, 
+                                          fill=color, outline=color, tags="gradient")
+        
+        # Add floating orbs/circles for extra effect
+        self.add_floating_elements()
+    
+    def add_floating_elements(self):
+        """Add floating CSS-like elements for visual appeal"""
+        width = self.root.winfo_width() if self.root.winfo_width() > 1 else 1000
+        height = self.root.winfo_height() if self.root.winfo_height() > 1 else 700
+        
+        # Add some floating circles with CSS-like blur effect simulation
+        orb_colors = [self.css_colors['primary'], self.css_colors['accent'], 
+                     self.css_colors['success'], self.css_colors['warning']]
+        
+        for i in range(8):
+            x = (i * width // 8) + (i * 50)
+            y = (height // 4) + (i % 3) * (height // 3)
+            radius = 30 + (i % 3) * 20
+            color = orb_colors[i % len(orb_colors)]
+            
+            # Create multiple circles with decreasing opacity effect
+            for j in range(5):
+                current_radius = radius - j * 5
+                alpha_color = self.add_alpha_to_color(color, 0.1 - j * 0.02)
+                if current_radius > 0:
+                    self.bg_canvas.create_oval(x - current_radius, y - current_radius,
+                                             x + current_radius, y + current_radius,
+                                             fill=alpha_color, outline="", tags="gradient")
+    
+    def interpolate_color(self, color1, color2, ratio):
+        """Interpolate between two hex colors"""
+        # Convert hex to RGB
+        c1 = tuple(int(color1[i:i+2], 16) for i in (1, 3, 5))
+        c2 = tuple(int(color2[i:i+2], 16) for i in (1, 3, 5))
+        
+        # Interpolate
+        r = int(c1[0] + (c2[0] - c1[0]) * ratio)
+        g = int(c1[1] + (c2[1] - c1[1]) * ratio)
+        b = int(c1[2] + (c2[2] - c1[2]) * ratio)
+        
+        return f"#{r:02x}{g:02x}{b:02x}"
+    
+    def add_alpha_to_color(self, color, alpha):
+        """Simulate alpha by blending with background"""
+        bg_color = self.css_colors['background']
+        
+        # Convert hex to RGB
+        c = tuple(int(color[i:i+2], 16) for i in (1, 3, 5))
+        bg = tuple(int(bg_color[i:i+2], 16) for i in (1, 3, 5))
+        
+        # Blend colors
+        r = int(bg[0] + (c[0] - bg[0]) * alpha)
+        g = int(bg[1] + (c[1] - bg[1]) * alpha)
+        b = int(bg[2] + (c[2] - bg[2]) * alpha)
+        
+        return f"#{r:02x}{g:02x}{b:02x}"
+    
+    def animate_background(self):
+        """Animate the gradient background"""
+        self.current_gradient = (self.current_gradient + 1) % len(self.gradient_colors)
+        self.draw_gradient_background()
+        
+    def animate_header(self):
+        """Animate the header with moving gradient"""
+        if hasattr(self, 'header_canvas'):
+            self.header_canvas.delete("header_bg")
+            
+            width = 230  # approximate header width
+            height = 76  # approximate header height
+            
+            # Create moving gradient effect
+            colors = ['#6c5ce7', '#a29bfe', '#74b9ff', '#fd79a8']
+            offset = (self.current_gradient * 20) % 100
+            
+            for i in range(4):
+                x1 = (i * width // 4) + offset - 50
+                x2 = x1 + width // 2
+                color = colors[i % len(colors)]
+                
+                self.header_canvas.create_rectangle(x1, 0, x2, height,
+                                                  fill=color, outline="", tags="header_bg")
+        
+        # Schedule next header animation
+        self.root.after(1000, self.animate_header)
+
     def darken_color(self, color, percent=20):
         """Darken a hex color by a given percentage"""
         if isinstance(color, str) and color.startswith('#'):
@@ -122,16 +265,24 @@ class ModernCalculator:
         return color
 
     def create_widgets(self):
-        # Create main container with sidebar
+        # Create animated gradient background canvas
+        self.create_gradient_background()
+        
+        # Create main container with sidebar (transparent-like effect)
         container = tk.Frame(self.root, bg=self.css_colors['background'])
         container.pack(fill='both', expand=True)
         
-        # Create sidebar
+        # Create sidebar (with semi-transparent effect)
         self.create_sidebar(container)
         
-        # Main content frame
-        main_frame = tk.Frame(container, bg=self.css_colors['card'])
+        # Main content frame (with glass-like effect)
+        main_frame = tk.Frame(container, bg='', highlightthickness=2, 
+                             highlightbackground=self.css_colors['primary'],
+                             highlightcolor=self.css_colors['accent'])
         main_frame.pack(side='right', fill='both', expand=True, padx=(0, 20), pady=20)
+        
+        # Make main frame semi-transparent
+        main_frame.configure(bg=self.add_alpha_to_color(self.css_colors['card'], 0.8))
         
         # Title with CSS h1 style
         title_label = tk.Label(main_frame, 
@@ -160,25 +311,29 @@ class ModernCalculator:
         self.create_result_display(result_frame)
     
     def create_sidebar(self, parent):
-        # Sidebar with modern gradient-like coloring
-        sidebar = tk.Frame(parent, bg=self.css_colors['dark'], width=250)
+        # Sidebar with glass-morphism effect
+        sidebar = tk.Frame(parent, bg=self.add_alpha_to_color(self.css_colors['dark'], 0.7), 
+                          width=250, highlightthickness=2,
+                          highlightbackground=self.css_colors['primary'],
+                          highlightcolor=self.css_colors['accent'])
         sidebar.pack(side='left', fill='y', padx=(20, 20), pady=20)
         sidebar.pack_propagate(False)
         
-        # Sidebar header with gradient effect
-        header_frame = tk.Frame(sidebar, bg=self.css_colors['primary'], height=80)
+        # Sidebar header with animated gradient effect
+        header_frame = tk.Frame(sidebar, height=80, highlightthickness=2,
+                               highlightbackground=self.css_colors['accent'])
         header_frame.pack(fill='x', padx=10, pady=(10, 20))
         header_frame.pack_propagate(False)
         
-        # Simulate gradient with overlapping frames
-        for i, color in enumerate(self.css_gradients['primary_gradient']):
-            grad_frame = tk.Frame(header_frame, bg=color, height=int(80/len(self.css_gradients['primary_gradient'])))
-            grad_frame.pack(fill='x')
+        # Create animated header background
+        self.header_canvas = tk.Canvas(header_frame, highlightthickness=0)
+        self.header_canvas.place(x=0, y=0, relwidth=1, relheight=1)
+        self.animate_header()
         
-        # Header label centered
+        # Header label centered with glow effect
         header_label = tk.Label(header_frame, text="⚡ CALCULATOR", 
                                font=('Segoe UI', 14, 'bold'), 
-                               fg='white', bg=self.css_colors['primary'])
+                               fg='white', bg='')
         header_label.place(relx=0.5, rely=0.5, anchor='center')
         
         # Navigation section
@@ -203,7 +358,8 @@ class ModernCalculator:
                            bg=color, fg=self.css_colors['text'], relief='flat', bd=0,
                            font=('Segoe UI', 10, 'bold'), cursor='hand2',
                            activebackground=self.lighten_color(color, 20),
-                           activeforeground=self.css_colors['text'])
+                           activeforeground=self.css_colors['text'],
+                           highlightthickness=1, highlightcolor=self.css_colors['accent'])
             btn.pack(fill='x', ipady=8)
         
         # Quick actions section
@@ -227,7 +383,8 @@ class ModernCalculator:
                            bg=color, fg=self.css_colors['text'], relief='flat', bd=0,
                            font=('Segoe UI', 9, 'bold'), cursor='hand2',
                            activebackground=self.lighten_color(color, 20),
-                           activeforeground=self.css_colors['text'])
+                           activeforeground=self.css_colors['text'],
+                           highlightthickness=1, highlightcolor=self.css_colors['accent'])
             btn.pack(fill='x', ipady=6)
         
         # Status section at bottom
