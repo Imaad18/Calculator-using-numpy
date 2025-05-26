@@ -7,10 +7,11 @@ class ModernCalculator:
     def __init__(self, root):
         self.root = root
         self.setup_window()
-        self.inject_css()  # Inject modern CSS-style coloring
+        self.inject_css()
         self.setup_styles()
         self.create_widgets()
         self.current_operation = None
+        self.calculation_history = []
         
     def setup_window(self):
         self.root.title("Modern NumPy Calculator")
@@ -59,6 +60,7 @@ class ModernCalculator:
         }
     
     def setup_styles(self):
+        """Setup ttk styles with modern CSS colors"""
         style = ttk.Style()
         style.theme_use('clam')
         
@@ -100,20 +102,25 @@ class ModernCalculator:
         style.map('Special.TButton',
                  background=[('active', self.lighten_color(self.css_colors['success'], 20)),
                            ('pressed', self.darken_color(self.css_colors['success'], 20))])
-        
-        # Configure sidebar button style
-        style.configure('Sidebar.TButton',
-                       background=self.css_colors['dark'],
-                       foreground=self.css_colors['text'],
-                       borderwidth=0,
-                       focuscolor='none',
-                       relief='flat',
-                       font=('Segoe UI', 10, 'bold'))
-        
-        style.map('Sidebar.TButton',
-                 background=[('active', self.lighten_color(self.css_colors['dark'], 20)),
-                           ('pressed', self.darken_color(self.css_colors['dark'], 20))])
     
+    def lighten_color(self, color, percent=20):
+        """Lighten a hex color by a given percentage"""
+        if isinstance(color, str) and color.startswith('#'):
+            color = color.lstrip('#')
+            rgb = tuple(int(color[i:i+2], 16) for i in (0, 2, 4))
+            lightened = tuple(min(255, int(c + (255 - c) * percent / 100)) for c in rgb)
+            return f"#{lightened[0]:02x}{lightened[1]:02x}{lightened[2]:02x}"
+        return color
+    
+    def darken_color(self, color, percent=20):
+        """Darken a hex color by a given percentage"""
+        if isinstance(color, str) and color.startswith('#'):
+            color = color.lstrip('#')
+            rgb = tuple(int(color[i:i+2], 16) for i in (0, 2, 4))
+            darkened = tuple(max(0, int(c * (100 - percent) / 100)) for c in rgb)
+            return f"#{darkened[0]:02x}{darkened[1]:02x}{darkened[2]:02x}"
+        return color
+
     def create_widgets(self):
         # Create main container with sidebar
         container = tk.Frame(self.root, bg=self.css_colors['background'])
@@ -163,13 +170,16 @@ class ModernCalculator:
         header_frame.pack(fill='x', padx=10, pady=(10, 20))
         header_frame.pack_propagate(False)
         
-        # Header gradient simulation with multiple frames
+        # Simulate gradient with overlapping frames
         for i, color in enumerate(self.css_gradients['primary_gradient']):
-            grad_frame = tk.Frame(header_frame, bg=color, height=26)
-            grad_frame.pack(fill='x', pady=(i*2, 0))
+            grad_frame = tk.Frame(header_frame, bg=color, height=int(80/len(self.css_gradients['primary_gradient'])))
+            grad_frame.pack(fill='x')
         
-        tk.Label(header_frame, text="⚡ CALCULATOR", 
-                font=('Segoe UI', 14, 'bold'), fg='white', bg=self.css_colors['primary']).place(relx=0.5, rely=0.5, anchor='center')
+        # Header label centered
+        header_label = tk.Label(header_frame, text="⚡ CALCULATOR", 
+                               font=('Segoe UI', 14, 'bold'), 
+                               fg='white', bg=self.css_colors['primary'])
+        header_label.place(relx=0.5, rely=0.5, anchor='center')
         
         # Navigation section
         nav_label = tk.Label(sidebar, text="🧭 NAVIGATION", 
@@ -192,13 +202,15 @@ class ModernCalculator:
             btn = tk.Button(btn_frame, text=text, command=command,
                            bg=color, fg=self.css_colors['text'], relief='flat', bd=0,
                            font=('Segoe UI', 10, 'bold'), cursor='hand2',
-                           activebackground=self.lighten_color(color, 20))
+                           activebackground=self.lighten_color(color, 20),
+                           activeforeground=self.css_colors['text'])
             btn.pack(fill='x', ipady=8)
         
         # Quick actions section
-        tk.Label(sidebar, text="⚡ QUICK ACTIONS", 
-                **self.css_text['h3'],
-                bg=self.css_colors['dark']).pack(pady=(30, 10), padx=20, anchor='w')
+        quick_label = tk.Label(sidebar, text="⚡ QUICK ACTIONS", 
+                              **self.css_text['h3'],
+                              bg=self.css_colors['dark'])
+        quick_label.pack(pady=(30, 10), padx=20, anchor='w')
         
         quick_actions = [
             ("🎯 Example Arrays", self.load_examples, self.css_colors['warning']),
@@ -214,7 +226,8 @@ class ModernCalculator:
             btn = tk.Button(btn_frame, text=text, command=command,
                            bg=color, fg=self.css_colors['text'], relief='flat', bd=0,
                            font=('Segoe UI', 9, 'bold'), cursor='hand2',
-                           activebackground=self.lighten_color(color, 20))
+                           activebackground=self.lighten_color(color, 20),
+                           activeforeground=self.css_colors['text'])
             btn.pack(fill='x', ipady=6)
         
         # Status section at bottom
@@ -222,32 +235,17 @@ class ModernCalculator:
         status_frame.pack(side='bottom', fill='x', padx=10, pady=10)
         status_frame.pack_propagate(False)
         
-        tk.Label(status_frame, text="🟢 Ready", 
-                font=('Segoe UI', 10, 'bold'), fg=self.css_colors['success'], bg=self.css_colors['dark']).pack(pady=5)
-        tk.Label(status_frame, text="NumPy Calculator v2.0", 
-                font=('Segoe UI', 8), fg=self.css_colors['light'], bg=self.css_colors['dark']).pack()
-    
-    def lighten_color(self, color, percent=20):
-        """Lighten a hex color by a given percentage"""
-        if isinstance(color, str) and color.startswith('#'):
-            color = color.lstrip('#')
-            rgb = tuple(int(color[i:i+2], 16) for i in (0, 2, 4))
-            lightened = tuple(min(255, int(c + (255 - c) * percent / 100)) for c in rgb)
-            return f"#{lightened[0]:02x}{lightened[1]:02x}{lightened[2]:02x}"
-        return color
-    
-    def darken_color(self, color, percent=20):
-        """Darken a hex color by a given percentage"""
-        if isinstance(color, str) and color.startswith('#'):
-            color = color.lstrip('#')
-            rgb = tuple(int(color[i:i+2], 16) for i in (0, 2, 4))
-            darkened = tuple(max(0, int(c * (100 - percent) / 100)) for c in rgb)
-            return f"#{darkened[0]:02x}{darkened[1]:02x}{darkened[2]:02x}"
-        return color
-
-    # [Rest of the code remains exactly the same...]
-    # All the existing methods (show_dashboard, create_input_section, etc.)
-    # remain unchanged to preserve functionality
+        status_ready = tk.Label(status_frame, text="🟢 Ready", 
+                               font=('Segoe UI', 10, 'bold'), 
+                               fg=self.css_colors['success'], 
+                               bg=self.css_colors['dark'])
+        status_ready.pack(pady=5)
+        
+        version_label = tk.Label(status_frame, text="NumPy Calculator v2.0", 
+                                font=('Segoe UI', 8), 
+                                fg=self.css_colors['light'], 
+                                bg=self.css_colors['dark'])
+        version_label.pack()
     
     def create_input_section(self, parent):
         # Input section with modern styling using CSS colors
@@ -255,48 +253,111 @@ class ModernCalculator:
         input_container.pack(fill='x', pady=10)
         
         # Array A input
-        tk.Label(input_container, text="Array A:", 
-                **self.css_text['h3'],
-                bg=self.css_colors['dark']).pack(anchor='w', padx=15, pady=(15, 5))
+        array_a_label = tk.Label(input_container, text="Array A:", 
+                                **self.css_text['h3'],
+                                bg=self.css_colors['dark'])
+        array_a_label.pack(anchor='w', padx=15, pady=(15, 5))
         
         self.array_a_entry = tk.Text(input_container, height=3, 
                                     **self.css_text['code'],
-                                    bg=self.css_colors['dark'],
+                                    bg=self.lighten_color(self.css_colors['dark'], 10),
                                     insertbackground='white',
-                                    relief='flat', bd=0)
+                                    relief='flat', bd=0,
+                                    highlightthickness=1,
+                                    highlightcolor=self.css_colors['primary'])
         self.array_a_entry.pack(fill='x', padx=15, pady=(0, 10))
         self.array_a_entry.insert('1.0', '[1, 2, 3]')
         
         # Array B input
-        tk.Label(input_container, text="Array B:", 
-                **self.css_text['h3'],
-                bg=self.css_colors['dark']).pack(anchor='w', padx=15, pady=(5, 5))
+        array_b_label = tk.Label(input_container, text="Array B:", 
+                                **self.css_text['h3'],
+                                bg=self.css_colors['dark'])
+        array_b_label.pack(anchor='w', padx=15, pady=(5, 5))
         
         self.array_b_entry = tk.Text(input_container, height=3, 
                                     **self.css_text['code'],
-                                    bg=self.css_colors['dark'],
+                                    bg=self.lighten_color(self.css_colors['dark'], 10),
                                     insertbackground='white',
-                                    relief='flat', bd=0)
+                                    relief='flat', bd=0,
+                                    highlightthickness=1,
+                                    highlightcolor=self.css_colors['primary'])
         self.array_b_entry.pack(fill='x', padx=15, pady=(0, 15))
         self.array_b_entry.insert('1.0', '[4, 5, 6]')
+    
+    def create_operation_buttons(self, parent):
+        # Operations section with modern styling
+        ops_container = tk.Frame(parent, bg=self.css_colors['dark'], relief='flat', bd=2)
+        ops_container.pack(fill='x', pady=10)
+        
+        ops_label = tk.Label(ops_container, text="🔧 Operations:", 
+                            **self.css_text['h2'],
+                            bg=self.css_colors['dark'])
+        ops_label.pack(anchor='w', padx=15, pady=(15, 10))
+        
+        # Create button grid
+        button_frame = tk.Frame(ops_container, bg=self.css_colors['dark'])
+        button_frame.pack(fill='x', padx=15, pady=(0, 15))
+        
+        # Basic operations
+        basic_ops = [
+            ("➕ Add", self.add_arrays, self.css_colors['success']),
+            ("➖ Subtract", self.subtract_arrays, self.css_colors['warning']),
+            ("✖️ Multiply", self.multiply_arrays, self.css_colors['accent']),
+            ("➗ Divide", self.divide_arrays, self.css_colors['info'])
+        ]
+        
+        # Advanced operations
+        advanced_ops = [
+            ("📊 Dot Product", self.dot_product, self.css_colors['primary']),
+            ("🔄 Transpose A", self.transpose_a, self.css_colors['secondary']),
+            ("📐 Shape Info", self.show_shapes, self.css_colors['dark']),
+            ("📈 Statistics", self.show_statistics, self.css_colors['success'])
+        ]
+        
+        # Create basic operations row
+        basic_frame = tk.Frame(button_frame, bg=self.css_colors['dark'])
+        basic_frame.pack(fill='x', pady=(0, 10))
+        
+        for i, (text, command, color) in enumerate(basic_ops):
+            btn = tk.Button(basic_frame, text=text, command=command,
+                           bg=color, fg=self.css_colors['text'], relief='flat', bd=0,
+                           font=('Segoe UI', 10, 'bold'), cursor='hand2',
+                           activebackground=self.lighten_color(color, 20),
+                           activeforeground=self.css_colors['text'])
+            btn.pack(side='left', fill='x', expand=True, padx=2, ipady=10)
+        
+        # Create advanced operations row
+        advanced_frame = tk.Frame(button_frame, bg=self.css_colors['dark'])
+        advanced_frame.pack(fill='x')
+        
+        for i, (text, command, color) in enumerate(advanced_ops):
+            btn = tk.Button(advanced_frame, text=text, command=command,
+                           bg=color, fg=self.css_colors['text'], relief='flat', bd=0,
+                           font=('Segoe UI', 10, 'bold'), cursor='hand2',
+                           activebackground=self.lighten_color(color, 20),
+                           activeforeground=self.css_colors['text'])
+            btn.pack(side='left', fill='x', expand=True, padx=2, ipady=10)
     
     def create_result_display(self, parent):
         # Result display with modern styling using CSS colors
         result_container = tk.Frame(parent, bg=self.css_colors['dark'], relief='flat', bd=2)
         result_container.pack(fill='both', expand=True, pady=10)
         
-        tk.Label(result_container, text="📋 Results:", 
-                **self.css_text['h2'],
-                bg=self.css_colors['dark']).pack(anchor='w', padx=15, pady=(15, 10))
+        result_label = tk.Label(result_container, text="📋 Results:", 
+                               **self.css_text['h2'],
+                               bg=self.css_colors['dark'])
+        result_label.pack(anchor='w', padx=15, pady=(15, 10))
         
         self.result_display = scrolledtext.ScrolledText(
             result_container,
             **self.css_text['code'],
-            bg=self.css_colors['dark'],
+            bg=self.lighten_color(self.css_colors['dark'], 5),
             insertbackground='white',
             relief='flat',
             bd=0,
-            height=15
+            height=15,
+            highlightthickness=1,
+            highlightcolor=self.css_colors['primary']
         )
         self.result_display.pack(fill='both', expand=True, padx=15, pady=(0, 15))
         
@@ -315,8 +376,157 @@ Array A: [[1, 2], [3, 4]]    Array B: [[5, 6], [7, 8]]
 Ready to calculate! 🎯
 """
         self.result_display.insert('1.0', welcome_msg)
+    
+    # Sidebar Navigation Methods
+    def show_dashboard(self):
+        self.log_result("📊 Dashboard: Main calculator view active")
+    
+    def show_operations(self):
+        self.log_result("🔧 Operations: All mathematical operations available")
+    
+    def show_settings(self):
+        self.log_result("⚙️ Settings: Configuration options (placeholder)")
+    
+    def show_history(self):
+        if self.calculation_history:
+            history_text = "📈 Calculation History:\n" + "\n".join(self.calculation_history[-10:])
+            self.log_result(history_text)
+        else:
+            self.log_result("📈 History: No calculations performed yet")
+    
+    # Quick Action Methods
+    def load_examples(self):
+        self.array_a_entry.delete('1.0', 'end')
+        self.array_b_entry.delete('1.0', 'end')
+        self.array_a_entry.insert('1.0', '[[1, 2, 3], [4, 5, 6]]')
+        self.array_b_entry.insert('1.0', '[[7, 8, 9], [10, 11, 12]]')
+        self.log_result("🎯 Example arrays loaded!")
+    
+    def clear_all(self):
+        self.array_a_entry.delete('1.0', 'end')
+        self.array_b_entry.delete('1.0', 'end')
+        self.result_display.delete('1.0', 'end')
+        self.log_result("🧹 All fields cleared!")
+    
+    def save_result(self):
+        try:
+            result_text = self.result_display.get('1.0', 'end-1c')
+            with open('calculator_results.txt', 'w') as f:
+                f.write(result_text)
+            self.log_result("💾 Results saved to 'calculator_results.txt'")
+        except Exception as e:
+            self.log_result(f"❌ Error saving: {str(e)}")
+    
+    def copy_result(self):
+        try:
+            self.root.clipboard_clear()
+            result_text = self.result_display.get('1.0', 'end-1c')
+            self.root.clipboard_append(result_text)
+            self.log_result("📋 Results copied to clipboard!")
+        except Exception as e:
+            self.log_result(f"❌ Error copying: {str(e)}")
+    
+    # Array Operation Methods
+    def get_arrays(self):
+        """Parse and return numpy arrays from input fields"""
+        try:
+            a_text = self.array_a_entry.get('1.0', 'end-1c').strip()
+            b_text = self.array_b_entry.get('1.0', 'end-1c').strip()
+            
+            array_a = np.array(eval(a_text))
+            array_b = np.array(eval(b_text))
+            
+            return array_a, array_b
+        except Exception as e:
+            self.log_result(f"❌ Error parsing arrays: {str(e)}")
+            return None, None
+    
+    def log_result(self, message):
+        """Add a message to the result display"""
+        self.result_display.insert('end', f"\n{message}\n")
+        self.result_display.see('end')
+        
+        # Add to history
+        if not message.startswith(('📊', '🔧', '⚙️', '📈', '🎯', '🧹', '💾', '📋')):
+            self.calculation_history.append(message)
+    
+    def add_arrays(self):
+        a, b = self.get_arrays()
+        if a is not None and b is not None:
+            try:
+                result = a + b
+                self.log_result(f"➕ Addition Result:\n{result}")
+            except Exception as e:
+                self.log_result(f"❌ Addition Error: {str(e)}")
+    
+    def subtract_arrays(self):
+        a, b = self.get_arrays()
+        if a is not None and b is not None:
+            try:
+                result = a - b
+                self.log_result(f"➖ Subtraction Result:\n{result}")
+            except Exception as e:
+                self.log_result(f"❌ Subtraction Error: {str(e)}")
+    
+    def multiply_arrays(self):
+        a, b = self.get_arrays()
+        if a is not None and b is not None:
+            try:
+                result = a * b
+                self.log_result(f"✖️ Multiplication Result:\n{result}")
+            except Exception as e:
+                self.log_result(f"❌ Multiplication Error: {str(e)}")
+    
+    def divide_arrays(self):
+        a, b = self.get_arrays()
+        if a is not None and b is not None:
+            try:
+                result = a / b
+                self.log_result(f"➗ Division Result:\n{result}")
+            except Exception as e:
+                self.log_result(f"❌ Division Error: {str(e)}")
+    
+    def dot_product(self):
+        a, b = self.get_arrays()
+        if a is not None and b is not None:
+            try:
+                result = np.dot(a, b)
+                self.log_result(f"📊 Dot Product Result:\n{result}")
+            except Exception as e:
+                self.log_result(f"❌ Dot Product Error: {str(e)}")
+    
+    def transpose_a(self):
+        try:
+            a_text = self.array_a_entry.get('1.0', 'end-1c').strip()
+            array_a = np.array(eval(a_text))
+            result = array_a.T
+            self.log_result(f"🔄 Transpose of Array A:\n{result}")
+        except Exception as e:
+            self.log_result(f"❌ Transpose Error: {str(e)}")
+    
+    def show_shapes(self):
+        a, b = self.get_arrays()
+        if a is not None and b is not None:
+            self.log_result(f"📐 Shape Information:\nArray A: {a.shape}\nArray B: {b.shape}")
+    
+    def show_statistics(self):
+        a, b = self.get_arrays()
+        if a is not None and b is not None:
+            try:
+                self.log_result(f"""📈 Statistical Analysis:
+Array A:
+  Mean: {np.mean(a):.4f}
+  Std:  {np.std(a):.4f}
+  Min:  {np.min(a)}
+  Max:  {np.max(a)}
 
-    # [All other existing methods remain exactly the same...]
+Array B:
+  Mean: {np.mean(b):.4f}
+  Std:  {np.std(b):.4f}
+  Min:  {np.min(b)}
+  Max:  {np.max(b)}""")
+            except Exception as e:
+                self.log_result(f"❌ Statistics Error: {str(e)}")
 
 def main():
     root = tk.Tk()
