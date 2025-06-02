@@ -1,4 +1,4 @@
-![scrnli_5Amt1HGeozt6WK](https://github.com/user-attachments/assets/e3f19a88-bcd6-46b6-bbfd-a537b3fab633)# For Professional Web App
+# For Professional Web App
 
 ![scrnli_AEZW3iVUmZsH7z](https://github.com/user-attachments/assets/98d1a24f-5e7f-448d-8365-2eb15ae9e040)
 
